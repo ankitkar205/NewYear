@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>2026: Gyro Enabled</title>
+    <title>2026: The Future</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;500;700&display=swap" rel="stylesheet">
@@ -12,11 +12,10 @@
             --neon-cyan: #00f3ff;
             --neon-pink: #ff00ff;
             --neon-purple: #bd00ff;
-            --bg-dark: #020205;
-            --grid-color: rgba(0, 243, 255, 0.15);
+            --bg-dark: #050510;
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; touch-action: none; /* Prevent scrolling */ }
+        * { margin: 0; padding: 0; box-sizing: border-box; touch-action: none; }
 
         body {
             background-color: var(--bg-dark);
@@ -27,181 +26,160 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            perspective: 1000px;
-            user-select: none;
-            -webkit-user-select: none;
+            perspective: 1000px; /* 3D Depth */
         }
 
-        /* --- OVERLAY FOR PERMISSIONS --- */
-        #start-overlay {
+        /* --- BACKGROUND LAYERS --- */
+        
+        /* 1. Deep Space Gradient */
+        .bg-gradient {
             position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.95);
-            z-index: 100;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            transition: opacity 0.5s;
+            width: 100%; height: 100%;
+            background: radial-gradient(circle at center 30%, #1a1a2e 0%, #000000 80%);
+            z-index: -10;
         }
 
-        .start-btn {
-            padding: 15px 40px;
-            font-size: 1.2rem;
-            font-family: 'Orbitron', sans-serif;
-            color: var(--neon-cyan);
-            background: transparent;
-            border: 2px solid var(--neon-cyan);
-            border-radius: 5px;
-            cursor: pointer;
-            box-shadow: 0 0 15px var(--neon-cyan);
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            animation: pulseBtn 1.5s infinite;
+        /* 2. Ambient Nebulas (Moving Blobs) */
+        .nebula {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.4;
+            animation: floatNebula 10s infinite ease-in-out;
+            z-index: -9;
+        }
+        .n1 { width: 400px; height: 400px; background: var(--neon-purple); top: -100px; left: -100px; animation-delay: 0s; }
+        .n2 { width: 500px; height: 500px; background: var(--neon-cyan); bottom: -100px; right: -100px; animation-delay: -5s; }
+
+        @keyframes floatNebula {
+            0%, 100% { transform: translate(0, 0); }
+            50% { transform: translate(30px, 50px); }
         }
 
-        @keyframes pulseBtn {
-            0% { box-shadow: 0 0 15px var(--neon-cyan); }
-            50% { box-shadow: 0 0 30px var(--neon-cyan), 0 0 10px #fff; }
-            100% { box-shadow: 0 0 15px var(--neon-cyan); }
-        }
-
-        /* --- INFINITE GRID --- */
-        .grid-plane {
+        /* 3. The Digital Grid Floor */
+        .grid-floor {
             position: absolute;
             bottom: -50%;
             left: -50%;
             width: 200%;
-            height: 200%;
+            height: 100%;
             background-image: 
-                linear-gradient(var(--grid-color) 1px, transparent 1px),
-                linear-gradient(90deg, var(--grid-color) 1px, transparent 1px);
+                linear-gradient(rgba(0, 243, 255, 0.2) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 243, 255, 0.2) 1px, transparent 1px);
             background-size: 50px 50px;
             transform: rotateX(70deg);
-            transform-origin: 50% 50%;
-            animation: gridMove 4s linear infinite;
-            mask-image: radial-gradient(circle, rgba(0,0,0,1) 0%, rgba(0,0,0,0) 70%);
+            animation: gridScroll 4s linear infinite;
+            mask-image: linear-gradient(to top, black 20%, transparent 80%);
             z-index: -5;
-            transition: animation-duration 0.5s; 
         }
 
-        .grid-plane.warp-speed { animation-duration: 0.2s; filter: drop-shadow(0 0 10px var(--neon-cyan)); }
+        .grid-floor.warp { animation-duration: 0.2s; filter: drop-shadow(0 0 10px var(--neon-cyan)); }
 
-        @keyframes gridMove {
+        @keyframes gridScroll {
             0% { transform: rotateX(70deg) translateY(0); }
             100% { transform: rotateX(70deg) translateY(50px); }
         }
 
+        /* 4. Glowing Horizon Line */
+        .horizon {
+            position: absolute;
+            top: 50%; left: 0; width: 100%; height: 2px;
+            background: linear-gradient(90deg, transparent, var(--neon-cyan), transparent);
+            box-shadow: 0 0 20px var(--neon-cyan);
+            opacity: 0.5;
+            z-index: -4;
+        }
+
+        /* Canvas handles Stars + Fireworks */
         canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none; }
 
-        /* --- 3D CARD --- */
+
+        /* --- UI & CARD --- */
+        #start-overlay {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.95); z-index: 100;
+            display: flex; flex-direction: column;
+            justify-content: center; align-items: center;
+            transition: opacity 0.5s;
+        }
+
+        .start-btn {
+            padding: 15px 40px; font-size: 1.2rem;
+            font-family: 'Orbitron', sans-serif;
+            color: var(--neon-cyan); background: transparent;
+            border: 2px solid var(--neon-cyan); border-radius: 5px;
+            text-transform: uppercase; letter-spacing: 2px;
+            box-shadow: 0 0 15px var(--neon-cyan);
+            cursor: pointer;
+        }
+
         .scene { position: relative; transform-style: preserve-3d; z-index: 10; }
 
         .card {
             position: relative;
-            width: 340px;
+            width: 320px;
             padding: 40px 20px;
-            background: rgba(15, 15, 20, 0.65);
-            backdrop-filter: blur(15px);
-            -webkit-backdrop-filter: blur(15px);
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
             border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 25px;
+            border-top: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 20px;
             text-align: center;
             transform-style: preserve-3d;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.8), inset 0 0 30px rgba(0, 243, 255, 0.05);
-            transition: transform 0.1s cubic-bezier(0.1, 0.1, 0.1, 1);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.6);
+            transition: transform 0.1s ease-out;
         }
 
         .card.shaking { animation: shake 0.1s infinite; }
-        @keyframes shake {
-            0%, 100% { transform: rotate(0deg); }
-            25% { transform: rotate(1deg); }
-            75% { transform: rotate(-1deg); }
-        }
+        @keyframes shake { 0%, 100% { transform: rotate(0deg); } 25% { transform: rotate(1deg); } 75% { transform: rotate(-1deg); } }
 
-        .header-text {
-            font-family: 'Rajdhani', sans-serif;
-            font-weight: 700;
-            color: var(--neon-purple);
-            letter-spacing: 5px;
-            font-size: 1rem;
-            transform: translateZ(30px);
-            text-transform: uppercase;
-            margin-bottom: 20px;
+        .header-text { color: var(--neon-purple); letter-spacing: 4px; font-size: 0.9rem; margin-bottom: 20px; text-transform: uppercase; font-family: 'Rajdhani', sans-serif; font-weight: 700; transform: translateZ(30px); }
+        
+        .year-text { font-size: 5rem; font-weight: 900; color: #fff; line-height: 1; transform: translateZ(60px); text-shadow: 0 0 20px var(--neon-cyan); margin-bottom: 10px; }
+        
+        .instruction {
+            margin-top: 30px; font-size: 0.7rem; color: var(--neon-cyan);
+            border: 1px solid var(--neon-cyan); padding: 8px 12px;
+            display: inline-block; border-radius: 20px;
+            transform: translateZ(40px); background: rgba(0, 243, 255, 0.1);
+            text-transform: uppercase; letter-spacing: 1px;
         }
 
         /* REACTOR */
-        .holo-container {
-            position: relative;
-            width: 100px;
-            height: 100px;
-            margin: 0 auto 20px auto;
-            transform-style: preserve-3d;
-            transform: translateZ(50px);
-        }
-        .ring {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            border: 2px solid transparent; border-radius: 50%;
-            box-shadow: 0 0 15px var(--neon-cyan);
-        }
+        .holo-container { position: relative; width: 100px; height: 100px; margin: 0 auto 20px auto; transform-style: preserve-3d; transform: translateZ(50px); }
+        .ring { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 2px solid transparent; border-radius: 50%; box-shadow: 0 0 10px var(--neon-cyan); }
         .r1 { border-top: 3px solid var(--neon-cyan); border-bottom: 3px solid var(--neon-cyan); animation: spin1 4s linear infinite; }
         .r2 { width: 80%; height: 80%; top: 10%; left: 10%; border-left: 3px solid var(--neon-pink); border-right: 3px solid var(--neon-pink); animation: spin2 3s linear infinite; }
-        .core {
-            position: absolute; top: 35%; left: 35%; width: 30%; height: 30%;
-            background: #fff; border-radius: 50%;
-            box-shadow: 0 0 20px #fff, 0 0 40px var(--neon-cyan);
-            animation: pulse 1s ease-in-out infinite alternate;
-        }
+        .core { position: absolute; top: 35%; left: 35%; width: 30%; height: 30%; background: #fff; border-radius: 50%; box-shadow: 0 0 20px #fff, 0 0 40px var(--neon-cyan); animation: pulse 1s ease-in-out infinite alternate; }
         .holo-container.overload .r1, .holo-container.overload .r2 { animation-duration: 0.1s; border-color: #fff; }
 
         @keyframes spin1 { 0% { transform: rotateX(0) rotateY(0); } 100% { transform: rotateX(360deg) rotateY(180deg); } }
         @keyframes spin2 { 0% { transform: rotateX(0) rotateY(0); } 100% { transform: rotateX(-180deg) rotateY(360deg); } }
         @keyframes pulse { 0% { transform: scale(0.9); opacity: 0.8; } 100% { transform: scale(1.1); opacity: 1; } }
 
-        .year-text {
-            font-size: 5rem;
-            font-weight: 900;
-            color: #fff;
-            line-height: 1;
-            transform: translateZ(60px);
-            text-shadow: 3px 3px var(--neon-pink), -3px -3px var(--neon-cyan);
-            margin-bottom: 10px;
-        }
-
-        .instruction {
-            margin-top: 30px;
-            font-size: 0.7rem;
-            color: var(--neon-cyan);
-            border: 1px solid var(--neon-cyan);
-            padding: 8px 12px;
-            display: inline-block;
-            border-radius: 20px;
-            transform: translateZ(40px);
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            background: rgba(0, 243, 255, 0.1);
-        }
-
-        @media (max-width: 600px) {
-            .year-text { font-size: 4.5rem; }
-            .card { width: 90%; }
-        }
     </style>
 </head>
 <body>
 
-    <!-- OVERLAY IS REQUIRED FOR IOS GYRO PERMISSIONS -->
-    <div id="start-overlay">
-        <button class="start-btn" onclick="initExperience()">Initialize 2026</button>
-        <p style="color:white; margin-top:20px; font-size:0.8rem; opacity:0.7;">Tap to enable Motion & Audio</p>
-    </div>
+    <!-- LAYERS -->
+    <div class="bg-gradient"></div>
+    <div class="nebula n1"></div>
+    <div class="nebula n2"></div>
+    
+    <!-- Moving Grid Floor -->
+    <div class="grid-floor" id="grid"></div>
+    <div class="horizon"></div>
 
-    <div class="grid-plane" id="grid"></div>
-    <canvas id="fireworksCanvas"></canvas>
+    <canvas id="mainCanvas"></canvas>
+
+    <div id="start-overlay">
+        <button class="start-btn" onclick="initExperience()">Initialize System</button>
+        <p style="color:white; margin-top:15px; font-size:0.8rem; opacity:0.6;">Tap to enable Gyro & Audio</p>
+    </div>
 
     <div class="scene">
         <div class="card" id="tiltCard">
-            <div class="header-text">System Ready</div>
+            <div class="header-text">Happy New Year</div>
             
             <div class="holo-container" id="reactor">
                 <div class="ring r1"></div>
@@ -210,7 +188,7 @@
             </div>
 
             <div class="year-text">2026</div>
-            <div class="instruction">Hold to Warp Speed</div>
+            <div class="instruction">Hold for Warp Speed</div>
         </div>
     </div>
 
@@ -221,149 +199,186 @@
         const reactor = document.getElementById('reactor');
         let isWarping = false;
         
-        // --- 1. INITIALIZE GYROSCOPE (The Fix) ---
+        // --- GYRO INIT ---
         function initExperience() {
-            // Fade out overlay
             overlay.style.opacity = '0';
             setTimeout(() => overlay.style.display = 'none', 500);
-
-            // Request Gyro Permission for iOS 13+
             if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
                 DeviceOrientationEvent.requestPermission()
-                    .then(permissionState => {
-                        if (permissionState === 'granted') {
-                            window.addEventListener('deviceorientation', handleOrientation);
-                        } else {
-                            alert("Motion permission denied. Use touch/mouse to interact.");
-                        }
-                    })
+                    .then(state => { if (state === 'granted') window.addEventListener('deviceorientation', handleOrientation); })
                     .catch(console.error);
             } else {
-                // Non-iOS or older devices usually work automatically
                 window.addEventListener('deviceorientation', handleOrientation);
             }
         }
 
-        // --- 2. MOTION HANDLER ---
         function handleOrientation(event) {
             if (isWarping) return;
-
-            // Beta: Front/Back tilt (-180 to 180)
-            // Gamma: Left/Right tilt (-90 to 90)
-            let tiltX = event.gamma; 
-            let tiltY = event.beta;
-
-            // Calibration: Natural holding position is usually tilted back ~45 degrees
-            // We subtract 45 so "holding naturally" counts as 0
-            if (tiltY) tiltY -= 45;
-
-            // Clamp values to prevent card from flipping over completely
-            if (tiltX > 30) tiltX = 30;
-            if (tiltX < -30) tiltX = -30;
-            if (tiltY > 30) tiltY = 30;
-            if (tiltY < -30) tiltY = -30;
-
-            // Apply rotation (inverted logic for natural feel)
-            // RotateY handles Left/Right (Gamma), RotateX handles Front/Back (Beta)
+            let tiltX = event.gamma; let tiltY = event.beta;
+            if (tiltY) tiltY -= 45; // Calibration
+            // Clamp
+            if (tiltX > 30) tiltX = 30; if (tiltX < -30) tiltX = -30;
+            if (tiltY > 30) tiltY = 30; if (tiltY < -30) tiltY = -30;
             card.style.transform = `rotateY(${tiltX}deg) rotateX(${-tiltY}deg)`;
         }
 
-        // --- 3. MOUSE FALLBACK ---
         document.addEventListener('mousemove', (e) => {
             if (isWarping) return;
-            const x = (window.innerWidth / 2 - e.pageX) / 20;
-            const y = (window.innerHeight / 2 - e.pageY) / 20;
+            const x = (window.innerWidth / 2 - e.pageX) / 25;
+            const y = (window.innerHeight / 2 - e.pageY) / 25;
             card.style.transform = `rotateY(${x}deg) rotateX(${y}deg)`;
         });
 
-        // --- 4. WARP SPEED LOGIC (Touch + Mouse) ---
+        // --- WARP INTERACTION ---
         function startWarp() {
             isWarping = true;
-            grid.classList.add('warp-speed');
+            grid.classList.add('warp');
             card.classList.add('shaking');
             reactor.classList.add('overload');
-            card.style.transform = `scale(0.95)`; // Snap to center slightly
+            card.style.transform = `scale(0.95)`;
             document.querySelector('.instruction').innerText = "HYPERSPEED ENGAGED";
             document.querySelector('.instruction').style.background = "#ff00ff";
             document.querySelector('.instruction').style.color = "white";
-            
-            // Fast fireworks
-            warpInterval = setInterval(() => {
-                createFirework(
-                    Math.random() * window.innerWidth, 
-                    Math.random() * window.innerHeight
-                );
-            }, 100);
         }
 
         function endWarp() {
             isWarping = false;
-            grid.classList.remove('warp-speed');
+            grid.classList.remove('warp');
             card.classList.remove('shaking');
             reactor.classList.remove('overload');
             card.style.transform = `rotateY(0deg) rotateX(0deg)`;
-            document.querySelector('.instruction').innerText = "Hold to Warp Speed";
+            document.querySelector('.instruction').innerText = "Hold for Warp Speed";
             document.querySelector('.instruction').style.background = "rgba(0, 243, 255, 0.1)";
             document.querySelector('.instruction').style.color = "var(--neon-cyan)";
-            clearInterval(warpInterval);
         }
 
-        let warpInterval;
-        // Mouse Events
         document.addEventListener('mousedown', startWarp);
         document.addEventListener('mouseup', endWarp);
-        // Touch Events
-        document.addEventListener('touchstart', (e) => { startWarp(); });
+        document.addEventListener('touchstart', startWarp);
         document.addEventListener('touchend', endWarp);
 
 
-        // --- 5. FIREWORKS ENGINE ---
-        const canvas = document.getElementById('fireworksCanvas');
+        // --- UNIFIED CANVAS ENGINE (STARS + FIREWORKS) ---
+        const canvas = document.getElementById('mainCanvas');
         const ctx = canvas.getContext('2d');
+        let width, height;
         let particles = [];
-        const colors = ['#00f3ff', '#ff00ff', '#bd00ff', '#ffffff'];
+        let stars = [];
 
-        function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+        function resize() {
+            width = window.innerWidth;
+            height = window.innerHeight;
+            canvas.width = width;
+            canvas.height = height;
+            initStars();
+        }
         window.addEventListener('resize', resize);
-        resize();
+        
+        // --- STAR SYSTEM ---
+        function initStars() {
+            stars = [];
+            for(let i=0; i<200; i++) {
+                stars.push({
+                    x: Math.random() * width - width/2,
+                    y: Math.random() * height - height/2,
+                    z: Math.random() * width
+                });
+            }
+        }
 
-        function createFirework(x, y) {
+        function updateStars() {
+            const cx = width / 2;
+            const cy = height / 2;
+            const speed = isWarping ? 40 : 2; // Warp speed multiplier
+
+            ctx.fillStyle = "#ffffff";
+            
+            stars.forEach(star => {
+                star.z -= speed;
+                if(star.z <= 0) {
+                    star.z = width;
+                    star.x = Math.random() * width - width/2;
+                    star.y = Math.random() * height - height/2;
+                }
+
+                const x = (star.x / star.z) * width + cx;
+                const y = (star.y / star.z) * height + cy;
+                const size = (1 - star.z / width) * 2;
+                
+                if(x > 0 && x < width && y > 0 && y < height) {
+                    if(isWarping) {
+                        // Draw Lines (Hyperspace)
+                        const prevX = (star.x / (star.z + speed*2)) * width + cx;
+                        const prevY = (star.y / (star.z + speed*2)) * height + cy;
+                        ctx.beginPath();
+                        ctx.moveTo(prevX, prevY);
+                        ctx.lineTo(x, y);
+                        ctx.strokeStyle = "rgba(255, 255, 255, 0.5)";
+                        ctx.lineWidth = size;
+                        ctx.stroke();
+                    } else {
+                        // Draw Dots
+                        ctx.beginPath();
+                        ctx.arc(x, y, size, 0, Math.PI * 2);
+                        ctx.fill();
+                    }
+                }
+            });
+        }
+
+        // --- FIREWORKS SYSTEM ---
+        function createFirework() {
+            const colors = ['#00f3ff', '#ff00ff', '#bd00ff', '#ffffff', '#ffd700'];
             const color = colors[Math.floor(Math.random() * colors.length)];
-            const count = isWarping ? 15 : 30; 
-            for (let i = 0; i < count; i++) {
+            const x = Math.random() * width;
+            const y = Math.random() * (height * 0.6);
+            
+            for(let i=0; i<30; i++) {
                 particles.push({
-                    x: x, y: y,
-                    color: color,
-                    vx: (Math.random() - 0.5) * (isWarping ? 15 : 6),
-                    vy: (Math.random() - 0.5) * (isWarping ? 15 : 6),
+                    x: x, y: y, color: color,
+                    vx: (Math.random() - 0.5) * 8,
+                    vy: (Math.random() - 0.5) * 8,
                     alpha: 1
                 });
             }
         }
 
-        function animate() {
-            ctx.fillStyle = isWarping ? 'rgba(2, 2, 5, 0.3)' : 'rgba(2, 2, 5, 0.15)';
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-            particles.forEach((p, index) => {
-                p.vx *= 0.95; p.vy *= 0.95; p.vy += 0.1;
+        function updateFireworks() {
+            for (let i = particles.length - 1; i >= 0; i--) {
+                let p = particles[i];
+                p.vx *= 0.95; p.vy *= 0.95; p.vy += 0.15;
                 p.x += p.vx; p.y += p.vy; p.alpha -= 0.02;
 
+                ctx.save();
                 ctx.globalAlpha = p.alpha;
                 ctx.fillStyle = p.color;
                 ctx.beginPath();
-                ctx.arc(p.x, p.y, isWarping ? 2 : 3, 0, Math.PI * 2);
+                ctx.arc(p.x, p.y, 2, 0, Math.PI * 2);
                 ctx.fill();
+                ctx.restore();
 
-                if (p.alpha <= 0) particles.splice(index, 1);
-            });
-
-            if(!isWarping && Math.random() < 0.02) {
-                createFirework(Math.random()*canvas.width, Math.random()*canvas.height/2);
+                if (p.alpha <= 0) particles.splice(i, 1);
             }
-            requestAnimationFrame(animate);
         }
-        animate();
+
+        // --- MAIN LOOP ---
+        function loop() {
+            // Clear Canvas
+            ctx.clearRect(0, 0, width, height);
+
+            updateStars();
+            updateFireworks();
+
+            // Auto-fireworks during warp
+            if(isWarping && Math.random() < 0.2) createFirework();
+            // Occasional fireworks when idle
+            if(!isWarping && Math.random() < 0.02) createFirework();
+
+            requestAnimationFrame(loop);
+        }
+
+        resize();
+        loop();
 
     </script>
 </body>
